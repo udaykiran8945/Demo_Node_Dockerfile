@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieBook - Movie Ticket Booking</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0b0f19;
+            color: white;
+        }
+
+        /* HEADER */
+        header {
+            background: #111827;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #252b38;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff3d71;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        nav a:hover {
+            color: #ff3d71;
+        }
+
+        .login-btn {
+            background: #ff3d71;
+            border: none;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* HERO */
+        .hero {
+            padding: 70px 7%;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            background:
+                linear-gradient(90deg, #0b0f19 15%, rgba(11,15,25,.7), rgba(11,15,25,.1)),
+                url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80")
+                center/cover;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: #ddd;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .hero-btn {
+            padding: 13px 28px;
+            border: none;
+            border-radius: 8px;
+            background: #ff3d71;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* MOVIES */
+        .container {
+            width: 86%;
+            margin: 40px auto;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+
+        .movies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+        }
+
+        .movie-card {
+            background: #151b28;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: .3s;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-info h3 {
+            margin-bottom: 8px;
+        }
+
+        .movie-info p {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .rating {
+            color: #ffc107;
+        }
+
+        .book-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #ff3d71;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* BOOKING SECTION */
+        .booking-section {
+            background: #111827;
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 50px;
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 13px;
+            background: #202938;
+            color: white;
+            border: 1px solid #343d4d;
+            border-radius: 7px;
+            margin-bottom: 20px;
+        }
+
+        /* DATE */
+        .dates {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .date {
+            background: #202938;
+            padding: 12px 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .date.active {
+            background: #ff3d71;
+        }
+
+        .date small {
+            display: block;
+            color: #bbb;
+            margin-top: 4px;
+        }
+
+        /* SHOWTIMES */
+        .showtimes {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .time {
+            padding: 11px 18px;
+            border: 1px solid #ff3d71;
+            border-radius: 7px;
+            cursor: pointer;
+            color: #ff6d93;
+        }
+
+        .time.active,
+        .time:hover {
+            background: #ff3d71;
+            color: white;
+        }
+
+        /* SEATS */
+        .screen {
+            background: #eee;
+            color: #222;
+            text-align: center;
+            padding: 8px;
+            border-radius: 50% 50% 0 0;
+            margin: 20px auto 30px;
+            width: 80%;
+            font-size: 13px;
+        }
+
+        .seats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .seat-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .seat {
+            width: 30px;
+            height: 30px;
+            background: #303b4d;
+            border-radius: 6px 6px 3px 3px;
+            cursor: pointer;
+        }
+
+        .seat:hover {
+            background: #ff7195;
+        }
+
+        .seat.selected {
+            background: #ff3d71;
+        }
+
+        .seat.occupied {
+            background: #555;
+            cursor: not-allowed;
+        }
+
+        .seat-info {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 25px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .seat-box {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .seat-demo {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            background: #303b4d;
+        }
+
+        .seat-demo.selected {
+            background: #ff3d71;
+        }
+
+        .seat-demo.occupied {
+            background: #555;
+        }
+
+        /* SUMMARY */
+        .summary {
+            background: #202938;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .summary h2 {
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 14px 0;
+            color: #ccc;
+        }
+
+        .total {
+            border-top: 1px solid #444;
+            padding-top: 15px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #ff3d71;
+            color: white;
+            font-size: 17px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: 60px;
+            background: #080c14;
+            padding: 30px;
+            text-align: center;
+            color: #888;
+        }
+
+        /* MOBILE */
+        @media(max-width: 800px) {
+            nav {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">🎬 MovieBook</div>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#movies">Movies</a>
+        <a href="#booking">Book Tickets</a>
+        <a href="#">Offers</a>
+        <a href="#">Contact</a>
+    </nav>
+
+    <button class="login-btn">Login</button>
+</header>
+
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Book Your Movie Tickets</h1>
+
+        <p>
+            Discover the latest movies, choose your favourite seats
+            and book your cinema tickets in just a few clicks.
+        </p>
+
+        <button class="hero-btn" onclick="scrollToBooking()">
+            🎟️ Book Now
+        </button>
+    </div>
+</section>
+
+
+<!-- MOVIES -->
+<section class="container" id="movies">
+
+    <h2 class="section-title">🔥 Now Showing</h2>
+
+    <div class="movies">
+
+        <div class="movie-card">
+
+            <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=500&q=80">
+
+            <div class="movie-info">
+
+                <h3>Galaxy Warriors</h3>
+
+                <p>Action • Sci-Fi</p>
+
+                <p class="rating">⭐ 8.7/10</p>
+
+                <button class="book-btn"
+                    onclick="selectMovie('Galaxy Warriors')">
+                    Book Tickets
+                </button>
+
+            </div>
+        </div>
+
+
+        <div class="movie-card">
+
+            <img src="https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=500&q=80">
+
+            <div class="movie-info">
+
+                <h3>The Last Journey</h3>
+
+                <p>Adventure • Drama</p>
+
+                <p class="rating">⭐ 8.3/10</p>
+
+                <button class="book-btn"
+                    onclick="selectMovie('The Last Journey')">
+                    Book Tickets
+                </button>
+
+            </div>
+        </div>
+
+
+        <div class="movie-card">
+
+            <img src="https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&w=500&q=80">
+
+            <div class="movie-info">
+
+                <h3>Dark Night</h3>
+
+                <p>Thriller • Mystery</p>
+
+                <p class="rating">⭐ 8.9/10</p>
+
+                <button class="book-btn"
+                    onclick="selectMovie('Dark Night')">
+                    Book Tickets
+                </button>
+
+            </div>
+        </div>
+
+
+        <div class="movie-card">
+
+            <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=500&q=80">
+
+            <div class="movie-info">
+
+                <h3>Love Forever</h3>
+
+                <p>Romance • Drama</p>
+
+                <p class="rating">⭐ 8.1/10</p>
+
+                <button class="book-btn"
+                    onclick="selectMovie('Love Forever')">
+                    Book Tickets
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- BOOKING -->
+<section class="container" id="booking">
+
+    <div class="booking-section">
+
+        <h2 class="section-title">🎟️ Book Your Tickets</h2>
+
+        <div class="booking-grid">
+
+            <!-- LEFT -->
+            <div>
+
+                <label>Select Movie</label>
+
+                <select id="movie">
+
+                    <option value="Galaxy Warriors">
+                        Galaxy Warriors
+                    </option>
+
+                    <option value="The Last Journey">
+                        The Last Journey
+                    </option>
+
+                    <option value="Dark Night">
+                        Dark Night
+                    </option>
+
+                    <option value="Love Forever">
+                        Love Forever
+                    </option>
+
+                </select>
+
+
+                <label>Select Date</label>
+
+                <div class="dates">
+
+                    <div class="date active" onclick="selectDate(this)">
+                        02
+                        <small>Oct</small>
+                    </div>
+
+                    <div class="date" onclick="selectDate(this)">
+                        03
+                        <small>Oct</small>
+                    </div>
+
+                    <div class="date" onclick="selectDate(this)">
+                        04
+                        <small>Oct</small>
+                    </div>
+
+                    <div class="date" onclick="selectDate(this)">
+                        05
+                        <small>Oct</small>
+                    </div>
+
+                    <div class="date" onclick="selectDate(this)">
+                        06
+                        <small>Oct</small>
+                    </div>
+
+                </div>
+
+
+                <label>Select Show Time</label>
+
+                <div class="showtimes">
+
+                    <div class="time active"
+                         onclick="selectTime(this)">
+                        10:00 AM
+                    </div>
+
+                    <div class="time"
+                         onclick="selectTime(this)">
+                        01:30 PM
+                    </div>
+
+                    <div class="time"
+                         onclick="selectTime(this)">
+                        04:30 PM
+                    </div>
+
+                    <div class="time"
+                         onclick="selectTime(this)">
+                        07:30 PM
+                    </div>
+
+                    <div class="time"
+                         onclick="selectTime(this)">
+                        10:30 PM
+                    </div>
+
+                </div>
+
+
+                <br>
+
+                <label>Select Seats</label>
+
+                <div class="screen">
+                    SCREEN
+                </div>
+
+
+                <div class="seats">
+
+                    <!-- ROW A -->
+                    <div class="seat-row">
+
+                        <div class="seat" onclick="selectSeat(this)">A1</div>
+                        <div class="seat" onclick="selectSeat(this)">A2</div>
+                        <div class="seat occupied">A3</div>
+                        <div class="seat occupied">A4</div>
+                        <div class="seat" onclick="selectSeat(this)">A5</div>
+                        <div class="seat" onclick="selectSeat(this)">A6</div>
+
+                    </div>
+
+
+                    <!-- ROW B -->
+                    <div class="seat-row">
+
+                        <div class="seat" onclick="selectSeat(this)">B1</div>
+                        <div class="seat" onclick="selectSeat(this)">B2</div>
+                        <div class="seat" onclick="selectSeat(this)">B3</div>
+                        <div class="seat occupied">B4</div>
+                        <div class="seat" onclick="selectSeat(this)">B5</div>
+                        <div class="seat" onclick="selectSeat(this)">B6</div>
+
+                    </div>
+
+
+                    <!-- ROW C -->
+                    <div class="seat-row">
+
+                        <div class="seat" onclick="selectSeat(this)">C1</div>
+                        <div class="seat" onclick="selectSeat(this)">C2</div>
+                        <div class="seat" onclick="selectSeat(this)">C3</div>
+                        <div class="seat" onclick="selectSeat(this)">C4</div>
+                        <div class="seat" onclick="selectSeat(this)">C5</div>
+                        <div class="seat" onclick="selectSeat(this)">C6</div>
+
+                    </div>
+
+
+                    <!-- ROW D -->
+                    <div class="seat-row">
+
+                        <div class="seat" onclick="selectSeat(this)">D1</div>
+                        <div class="seat" onclick="selectSeat(this)">D2</div>
+                        <div class="seat" onclick="selectSeat(this)">D3</div>
+                        <div class="seat" onclick="selectSeat(this)">D4</div>
+                        <div class="seat" onclick="selectSeat(this)">D5</div>
+                        <div class="seat" onclick="selectSeat(this)">D6</div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="seat-info">
+
+                    <div class="seat-box">
+                        <span class="seat-demo"></span>
+                        Available
+                    </div>
+
+                    <div class="seat-box">
+                        <span class="seat-demo selected"></span>
+                        Selected
+                    </div>
+
+                    <div class="seat-box">
+                        <span class="seat-demo occupied"></span>
+                        Occupied
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+            <div>
+
+                <div class="summary">
+
+                    <h2>Booking Summary</h2>
+
+                    <div class="summary-row">
+
+                        <span>Movie</span>
+
+                        <strong id="summaryMovie">
+                            Galaxy Warriors
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Date</span>
+
+                        <strong id="summaryDate">
+                            02 Oct
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Time</span>
+
+                        <strong id="summaryTime">
+                            10:00 AM
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Seats</span>
+
+                        <strong id="summarySeats">
+                            None
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Ticket Price</span>
+
+                        <strong>₹180</strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Convenience Fee</span>
+
+                        <strong>₹30</strong>
+
+                    </div>
+
+
+                    <div class="summary-row total">
+
+                        <span>Total</span>
+
+                        <strong id="total">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+
+                    <button class="pay-btn"
+                            onclick="confirmBooking()">
+
+                        Proceed to Payment 💳
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+
+    <p>© 2026 MovieBook. All Rights Reserved.</p>
+
+    <p style="margin-top:10px;">
+        Movies • Tickets • Cinemas • Offers
+    </p>
+
+</footer>
+
+
+<script>
+
+    const ticketPrice = 180;
+    const convenienceFee = 30;
+
+    let selectedSeats = [];
+
+
+    // MOVIE SELECTION
+    function selectMovie(movieName) {
+
+        document.getElementById("movie").value = movieName;
+
+        document.getElementById("summaryMovie").innerText =
+            movieName;
+
+        scrollToBooking();
+    }
+
+
+    // DATE SELECTION
+    function selectDate(element) {
+
+        document.querySelectorAll(".date").forEach(date => {
+            date.classList.remove("active");
+        });
+
+        element.classList.add("active");
+
+        const date =
+            element.innerText.replace(/\s+/g, " ").trim();
+
+        document.getElementById("summaryDate").innerText = date;
+    }
+
+
+    // TIME SELECTION
+    function selectTime(element) {
+
+        document.querySelectorAll(".time").forEach(time => {
+            time.classList.remove("active");
+        });
+
+        element.classList.add("active");
+
+        document.getElementById("summaryTime").innerText =
+            element.innerText;
+    }
+
+
+    // SEAT SELECTION
+    function selectSeat(seat) {
+
+        if (seat.classList.contains("occupied")) {
+            return;
+        }
+
+        const seatNumber = seat.innerText;
+
+        if (seat.classList.contains("selected")) {
+
+            seat.classList.remove("selected");
+
+            selectedSeats =
+                selectedSeats.filter(
+                    seat => seat !== seatNumber
+                );
+
+        } else {
+
+            seat.classList.add("selected");
+
+            selectedSeats.push(seatNumber);
+        }
+
+
+        updateSummary();
+    }
+
+
+    // UPDATE SUMMARY
+    function updateSummary() {
+
+        const seatText =
+            selectedSeats.length > 0
+                ? selectedSeats.join(", ")
+                : "None";
+
+        document.getElementById("summarySeats").innerText =
+            seatText;
+
+
+        let total = 0;
+
+        if (selectedSeats.length > 0) {
+
+            total =
+                (selectedSeats.length * ticketPrice)
+                + convenienceFee;
+
+        }
+
+        document.getElementById("total").innerText =
+            "₹" + total;
+    }
+
+
+    // MOVIE DROPDOWN
+    document.getElementById("movie")
+        .addEventListener("change", function () {
+
+            document.getElementById("summaryMovie")
+                .innerText = this.value;
+
+        });
+
+
+    // BOOKING
+    function confirmBooking() {
+
+        if (selectedSeats.length === 0) {
+
+            alert("Please select at least one seat.");
+
+            return;
+        }
+
+
+        const movie =
+            document.getElementById("summaryMovie").innerText;
+
+        const seats =
+            selectedSeats.join(", ");
+
+        const total =
+            document.getElementById("total").innerText;
+
+
+        alert(
+            "🎉 Booking Confirmed!\n\n" +
+            "Movie: " + movie + "\n" +
+            "Seats: " + seats + "\n" +
+            "Total: " + total
+        );
+    }
+
+
+    // SCROLL TO BOOKING
+    function scrollToBooking() {
+
+        document.getElementById("booking")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+</script>
+
+</body>
+</html>
